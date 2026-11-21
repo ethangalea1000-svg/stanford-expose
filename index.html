@@ -10,7 +10,7 @@
     --cardinal-dark:#5e0d0d;
     --ivory:#F4F1EA;
     --ink:#232323;
-    --stone:#6b655c;
+    --stone:#54503f;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -87,7 +87,7 @@
   .viewer img{position:relative;z-index:1}
   .viewer .credit{position:relative;z-index:1}
   .viewer .controls{z-index:2}
-  .viewer img{display:block;width:100%;height:100%;max-height:44vh;object-fit:cover;background:#111}
+  .viewer img{display:block;width:100%;height:100%;max-height:44vh;object-fit:cover;background:transparent}
   .viewer img.contain{object-fit:contain}
   .credit{font-size:11px;color:#cfcfcf;padding:5px 10px;background:#1b1b1b}
   .controls{
@@ -102,8 +102,8 @@
   /* mots-clés, lisibles de loin */
   ul.keywords{list-style:none}
   ul.keywords li{
-    font-size:clamp(16px,1.8vw,22px);line-height:1.3;
-    padding:7px 0 7px 28px;position:relative;border-bottom:1px solid #e3ddd0;
+    font-size:clamp(17px,1.9vw,23px);line-height:1.28;
+    padding:6px 0 6px 28px;position:relative;border-bottom:1px solid #e3ddd0;
   }
   ul.keywords li::before{
     content:"";position:absolute;left:4px;top:15px;width:12px;height:12px;
@@ -112,7 +112,7 @@
   ul.keywords li b{color:var(--cardinal)}
 
   /* tableaux (études, anciens élèves, frais, aides) */
-  .facttable{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:clamp(14px,1.6vw,19px)}
+  .facttable{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:clamp(15px,1.7vw,20px)}
   .facttable th{background:var(--cardinal);color:#fff;text-align:left;padding:8px 10px}
   .facttable td{padding:8px 10px;border-bottom:1px solid #e3ddd0;vertical-align:top}
   .facttable tr:nth-child(even) td{background:#faf7f0}
@@ -125,26 +125,25 @@
   #slide.swap{animation:fadeIn .5s ease}
   #slide.kz{animation:kenburns 14s ease-in-out infinite alternate}
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
-  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme{animation:none!important}.theme-btn::before{transition:none}}
+  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme,#home.home-in{animation:none!important}.theme-btn::before{transition:none}}
 
   @media (max-height:800px){
-    .viewer img{max-height:30vh}
+    .viewer img{max-height:28vh}
     .theme-body{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
-    .facttable{font-size:14px}
-    .facttable th,.facttable td{padding:6px 8px}
-    ul.timeline li{padding:3px 0 3px 74px;font-size:14px}
-    ul.timeline li{padding:4px 0 4px 74px;font-size:15px}
-    ul.keywords li{padding:5px 0 5px 26px;font-size:16px}
+    .facttable{font-size:15px}
+    .facttable th,.facttable td{padding:5px 8px}
+    ul.timeline li{padding:2px 0 2px 74px;font-size:14.5px}
+    ul.keywords li{padding:4px 0 4px 26px;font-size:15.5px}
     #themeTitle{font-size:clamp(22px,3vw,34px)}
   }
 
   @media (max-height:680px){
     .viewer img{max-height:26vh}
-    .facttable{font-size:13px}
+    .facttable{font-size:14px}
     .facttable th,.facttable td{padding:4px 7px}
-    ul.timeline li{padding:2px 0 2px 70px;font-size:12.5px;line-height:1.25}
-    ul.timeline .yr{font-size:12px}
-    ul.keywords li{padding:3px 0 3px 26px;font-size:14px}
+    ul.timeline li{padding:3px 0 3px 70px;font-size:13px;line-height:1.25}
+    ul.timeline .yr{font-size:12.5px}
+    ul.keywords li{padding:4px 0 4px 26px;font-size:15px}
     #themeTitle{font-size:clamp(20px,2.6vw,30px)}
     #theme{padding-top:12px}
     .topbar{margin-bottom:6px}
@@ -157,17 +156,28 @@
 
   /* --- passe 2 : finitions interface et transitions --- */
   header{box-shadow:0 2px 12px rgba(0,0,0,.18)}
-  @keyframes themeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  #theme{animation:themeIn .45s ease}
+  @keyframes themeIn{from{opacity:0;transform:translateX(70px)}to{opacity:1;transform:none}}
+  #theme{animation:themeIn .55s cubic-bezier(.22,.8,.3,1)}
+  @keyframes homeIn{from{opacity:0;transform:translateX(-70px)}to{opacity:1;transform:none}}
+  #home.home-in{animation:homeIn .55s cubic-bezier(.22,.8,.3,1)}
   .theme-btn:active{transform:scale(.98)}
   #backBtn:focus-visible,.controls button:focus-visible,.theme-btn:focus-visible{outline:3px solid #f5e08a;outline-offset:2px}
   .controls button{backdrop-filter:blur(4px);padding:10px 18px;font-size:17px}
-  @media (min-height:900px){.facttable th,.facttable td{padding:10px 12px}}
+  @media (min-height:900px){.facttable th,.facttable td{padding:9px 12px}}
 
   /* frise chronologique (histoire) */
   ul.timeline{list-style:none;margin-bottom:14px}
-  ul.timeline li{position:relative;padding:5px 0 5px 78px;font-size:clamp(15px,1.7vw,20px);line-height:1.3;border-bottom:1px solid #e3ddd0}
+  ul.timeline li{position:relative;padding:4px 0 4px 78px;font-size:clamp(16px,1.8vw,21px);line-height:1.25;border-bottom:1px solid #e3ddd0}
   ul.timeline .yr{position:absolute;left:0;top:8px;background:var(--cardinal);color:#fff;border-radius:6px;padding:2px 8px;font-size:14px;font-weight:bold}
+
+  /* formats compacts (ex. projecteur 720p) : la frise doit rester visible sans scroll */
+  @media (max-height:800px){
+    ul.timeline li{padding:2px 0 2px 74px;font-size:14.5px;line-height:1.25}
+  }
+  @media (max-height:680px){
+    ul.timeline li{padding:2px 0 2px 70px;font-size:13px;line-height:1.25}
+    ul.timeline .yr{font-size:12px}
+  }
 </style>
 </head>
 <body>
@@ -453,6 +463,7 @@ function goHome(){
   current=null;
   themeEl.style.display='none';
   homeEl.style.display='block';
+  homeEl.classList.remove('home-in'); void homeEl.offsetWidth; homeEl.classList.add('home-in');
 }
 function showSlide(){
   if(!current) return;
