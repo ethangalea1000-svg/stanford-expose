@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stanford University — Our Presentation</title>
+<style>
+  :root{
+    --cardinal:#8C1515;        /* rouge officiel Stanford */
+    --cardinal-dark:#5e0d0d;
+    --ivory:#F4F1EA;
+    --ink:#232323;
+    --stone:#6b655c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    font-family:Georgia,'Times New Roman',serif;
+    background:var(--ivory);color:var(--ink);
+    min-height:100vh;display:flex;flex-direction:column;
+  }
+  header{
+    background:var(--cardinal);color:#fff;
+    padding:18px 28px;display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;
+  }
+  header h1{font-size:clamp(22px,3.4vw,38px);letter-spacing:2px}
+  header .sub{font-size:clamp(13px,1.4vw,17px);opacity:.85;font-style:italic}
+  main{flex:1;padding:26px clamp(14px,4vw,48px)}
+
+  /* ---------- ACCUEIL : gros boutons par thème ---------- */
+  #home h2{font-size:clamp(16px,2vw,22px);color:var(--stone);margin-bottom:18px;font-weight:normal;font-style:italic}
+  .grid{
+    display:grid;gap:16px;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  }
+  .theme-btn{
+    border:none;border-radius:14px;cursor:pointer;text-align:left;
+    padding:22px 20px;background:#fff;color:var(--ink);
+    border-left:10px solid var(--cardinal);
+    box-shadow:0 3px 10px rgba(0,0,0,.12);
+    transition:transform .15s,box-shadow .15s;
+    font-family:inherit;
+  }
+  .theme-btn:hover,.theme-btn:focus-visible{transform:translateY(-3px);box-shadow:0 8px 18px rgba(140,21,21,.25);outline:none}
+  .theme-btn .num{font-size:13px;color:var(--cardinal);letter-spacing:2px;text-transform:uppercase}
+  .theme-btn .name{font-size:clamp(19px,2.2vw,26px);margin-top:6px;line-height:1.15}
+  .theme-btn .hint{font-size:13px;color:var(--stone);margin-top:8px}
+
+  /* ---------- VUE THÈME ---------- */
+  #theme{display:none}
+  .topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  #backBtn{
+    border:none;background:var(--cardinal);color:#fff;border-radius:10px;
+    font-size:clamp(15px,1.6vw,19px);padding:10px 18px;cursor:pointer;font-family:inherit;
+  }
+  #backBtn:hover{background:var(--cardinal-dark)}
+  #themeTitle{font-size:clamp(24px,3.4vw,42px);color:var(--cardinal);letter-spacing:1px}
+  .theme-body{display:grid;gap:22px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+  @media (max-width:900px){.theme-body{grid-template-columns:1fr}}
+
+  /* zone images : diaporama automatique avec pause */
+  .viewer{position:relative;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  .viewer img{display:block;width:100%;height:100%;max-height:62vh;object-fit:contain;background:#111}
+  .credit{font-size:11px;color:#cfcfcf;padding:5px 10px;background:#1b1b1b}
+  .controls{
+    position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:10px;
+  }
+  .controls button{
+    border:none;border-radius:999px;background:rgba(140,21,21,.92);color:#fff;
+    font-size:16px;padding:8px 16px;cursor:pointer;font-family:inherit;
+  }
+  .controls button:hover{background:var(--cardinal-dark)}
+
+  /* mots-clés, lisibles de loin */
+  ul.keywords{list-style:none}
+  ul.keywords li{
+    font-size:clamp(17px,2vw,24px);line-height:1.35;
+    padding:10px 0 10px 30px;position:relative;border-bottom:1px solid #e3ddd0;
+  }
+  ul.keywords li::before{
+    content:"";position:absolute;left:4px;top:20px;width:12px;height:12px;
+    background:var(--cardinal);border-radius:3px;
+  }
+  ul.keywords li b{color:var(--cardinal)}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>STANFORD UNIVERSITY</h1>
+  <span class="sub">English school presentation</span>
+</header>
+
+<main>
+  <!-- ACCUEIL : un gros bouton par thème. On clique pendant l'oral. -->
+  <section id="home">
+    <h2>Choose a topic / Choisis un thème :</h2>
+    <div class="grid" id="themeGrid"></div>
+  </section>
+
+  <!-- VUE THÈME : images qui tournent toutes seules + mots-clés -->
+  <section id="theme">
+    <div class="topbar">
+      <button id="backBtn">← All topics</button>
+      <h2 id="themeTitle"></h2>
+    </div>
+    <div class="theme-body">
+      <div class="viewer">
+        <img id="slide" src="" alt="">
+        <div class="credit" id="credit"></div>
+        <div class="controls">
+          <button id="prevBtn">◀</button>
+          <button id="playBtn">⏸ Pause</button>
+          <button id="nextBtn">▶</button>
+        </div>
+      </div>
+      <ul class="keywords" id="keywords"></ul>
+    </div>
+  </section>
+</main>
+
+<script>
+/* =====================================================================
+   DONNÉES DU SITE — tout est ici, dans l'objet THEMES.
+   Pour modifier un texte : changer la ligne correspondante.
+   Pour retirer un thème : supprimer son bloc entre { et }.
+   Pour ajouter une animation plus tard :
+     1. chaque thème a une ligne  animation: null
+     2. remplacer null par une fonction maison, ex. :
+          animation: function(box){ box.style.background = "red"; }
+     3. elle reçoit la boîte d'affichage (div.viewer) et est lancée
+        automatiquement quand on ouvre le thème. Voir startAnimation().
+   ===================================================================== */
+const THEMES = [
+  {
+    id:"campus",
+    name:"The Campus",
+    hint:"Size, buildings, transport",
+    keywords:[
+      "<b>8,353 acres</b> · 630 buildings · 26,000 trees",
+      "Designed with <b>Frederick Law Olmsted</b>, the Central Park landscaper",
+      "<b>Palm Drive</b>: more than 160 palm trees lead to the Main Quad",
+      "<b>Hoover Tower</b>: 87 metres, the campus landmark",
+      "<b>Memorial Church</b>: famous mosaics made in Venice",
+      "Free <b>Marguerite shuttle</b> · 10,400 bikes a day · no car in first year",
+      "<b>Cantor Arts Center</b>: 42,000 works, always free"
+    ],
+    images:[
+      {src:"mainquad.jpg",  credit:"Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"palmdrive.jpg",credit:"Palm Drive — photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"hoover.jpg",   credit:"Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+    ],
+    animation:null   /* ← animation ici */
+  },
+  {
+    id:"tuition",
+    name:"Tuition & Fees",
+    hint:"What it costs (2026–2027)",
+    keywords:[
+      "Tuition: <b>$67,731</b> per year",
+      "Total budget: about <b>$97,545</b> per year",
+      "Housing & meals: <b>$22,944</b>",
+      "Books: <b>$855</b> · personal costs: <b>$3,405</b>",
+      "New students: <b>+$775</b> one-time fees",
+      "Transport and health insurance not included"
+    ],
+    images:[
+      {src:"mainquad2.jpg", credit:"The Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  },
+  {
+    id:"aid",
+    name:"Financial Aid",
+    hint:"Scholarships and help",
+    keywords:[
+      "Stanford covers <b>100% of demonstrated need</b> — no loans expected",
+      "Family income under <b>$150,000</b>: free tuition",
+      "Under <b>$100,000</b>: tuition + housing + meals <b>free</b>",
+      "Almost <b>half</b> of undergraduates receive aid",
+      "Average aid (Class of 2028 recipients): <b>$74,310</b>",
+      "<b>Athletic scholarships</b> also exist (NCAA Division I)",
+      "International students: limited aid — ask when applying"
+    ],
+    images:[
+      {src:"aerial.jpg", credit:"The campus from Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  },
+  {
+    id:"history",
+    name:"History",
+    hint:"From 1885 to today",
+    keywords:[
+      "Founded in <b>1885</b> by <b>Leland and Jane Stanford</b>",
+      "In memory of their son <b>Leland Jr</b>, who died at 15",
+      "Opened on <b>October 1, 1891</b>",
+      "Official name: <b>Leland Stanford Junior University</b>",
+      "Motto in German: <b>« Die Luft der Freiheit weht »</b> — the wind of freedom blows",
+      "Nickname: <b>« The Farm »</b> — it was a horse farm",
+      "The <b>1906 earthquake</b> destroyed Memorial Church — rebuilt in 1914"
+    ],
+    images:[
+      {src:"church.jpg", credit:"Memorial Church — photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  },
+  {
+    id:"valley",
+    name:"Silicon Valley",
+    hint:"Companies born at Stanford",
+    keywords:[
+      "Stanford is the <b>birthplace of Silicon Valley</b>",
+      "<b>HP</b> founded in <b>1939</b> by two Stanford students",
+      "Professor <b>Terman</b> pushed students to start companies",
+      "<b>Google, Yahoo, Netflix, Nike, Instagram, LinkedIn, NVIDIA, WhatsApp</b>: founded by alumni",
+      "<b>Cisco</b> (1984) came from the campus computer network",
+      "<b>Stanford Research Park</b>: 150 companies"
+    ],
+    images:[
+      {src:"hpgarage.jpg",  credit:"The HP Garage, Palo Alto — photo: Oysterboy9, CC BY-SA 4.0, via Wikimedia Commons"},
+      {src:"hpgarage2.jpg", credit:"The HP Garage and house — photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  },
+  {
+    id:"innovations",
+    name:"Innovations & Research",
+    hint:"Inventions and science",
+    keywords:[
+      "The <b>klystron</b> (1937): key for air navigation and particle accelerators",
+      "<b>First website in North America</b>: SLAC lab, 1991",
+      "<b>22 Nobel Prize</b> winners in the community",
+      "More than <b>7,500</b> sponsored research projects",
+      "A world leader in <b>AI research</b> (Stanford HAI, AI Index)"
+    ],
+    images:[
+      {src:"slac.jpg",  credit:"SLAC National Accelerator Laboratory — photo: Alfred Twu, CC0, via Wikimedia Commons"},
+      {src:"slac2.jpg", credit:"The linear accelerator from above — photo: Pi.1415926535, CC BY-SA 3.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  },
+  {
+    id:"life",
+    name:"Student Life",
+    hint:"Housing, sports, people",
+    keywords:[
+      "<b>7,289</b> undergraduate + <b>10,025</b> graduate students (fall 2025)",
+      "Housing for everyone: dorms, <b>Row houses</b>, co-ops",
+      "The <b>Big Game</b>: historic football rivalry vs UC Berkeley",
+      "<b>139 NCAA titles</b> — a national record",
+      "<b>1,000+</b> students volunteer every year",
+      "Famous alumni: <b>Herbert Hoover, Sally Ride, Tiger Woods, Katie Ledecky</b>"
+    ],
+    images:[
+      {src:"stadium.jpg", credit:"Stanford Stadium — photo: BrokenSphere, CC BY 3.0, via Wikimedia Commons"},
+      {src:"rodin.jpg",   credit:"Rodin Sculpture Garden — photo: GualdimG, CC BY-SA 4.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  }
+];
+
+/* =====================================================================
+   MOTEUR DU SITE — normalement pas besoin d'y toucher.
+   ===================================================================== */
+const homeEl   = document.getElementById('home');
+const themeEl  = document.getElementById('theme');
+const gridEl   = document.getElementById('themeGrid');
+const titleEl  = document.getElementById('themeTitle');
+const kwEl     = document.getElementById('keywords');
+const imgEl    = document.getElementById('slide');
+const creditEl = document.getElementById('credit');
+const playBtn  = document.getElementById('playBtn');
+
+let current = null;   // thème ouvert
+let slideIndex = 0;
+let timer = null;
+let playing = true;
+const SLIDE_MS = 5000; // une image toutes les 5 secondes
+
+/* Construit les gros boutons de l'accueil */
+THEMES.forEach((t,i)=>{
+  const b=document.createElement('button');
+  b.className='theme-btn';
+  b.innerHTML='<div class="num">Topic '+(i+1)+'</div><div class="name">'+t.name+'</div><div class="hint">'+t.hint+'</div>';
+  b.addEventListener('click',()=>openTheme(t));
+  gridEl.appendChild(b);
+});
+
+function openTheme(t){
+  current=t; slideIndex=0;
+  titleEl.textContent=t.name;
+  kwEl.innerHTML=t.keywords.map(k=>'<li>'+k+'</li>').join('');
+  homeEl.style.display='none';
+  themeEl.style.display='block';
+  showSlide();
+  startAnimation(t);      /* ← lance l'animation du thème si elle existe */
+  play();
+}
+function goHome(){
+  stop();
+  current=null;
+  themeEl.style.display='none';
+  homeEl.style.display='block';
+}
+function showSlide(){
+  if(!current) return;
+  const im=current.images[slideIndex];
+  imgEl.src=im.src;
+  imgEl.alt=im.credit;
+  creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+' — '+im.credit;
+}
+function nextSlide(step){
+  slideIndex=(slideIndex+step+current.images.length)%current.images.length;
+  showSlide();
+}
+function play(){
+  playing=true; playBtn.textContent='⏸ Pause';
+  stop(); timer=setInterval(()=>{ if(current && current.images.length>1) nextSlide(1); }, SLIDE_MS);
+}
+function pause(){ playing=false; playBtn.textContent='▶ Play'; stop(); }
+function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+
+/* Point d'entrée pour les animations.
+   Appelé à chaque ouverture de thème. Pour l'instant : ne fait rien
+   si le thème n'a pas d'animation (animation:null). */
+function startAnimation(t){
+  if(typeof t.animation==='function'){
+    try{ t.animation(document.querySelector('.viewer')); }
+    catch(e){ console.warn('animation error', e); }
+  }
+}
+
+document.getElementById('backBtn').addEventListener('click',goHome);
+document.getElementById('prevBtn').addEventListener('click',()=>nextSlide(-1));
+document.getElementById('nextBtn').addEventListener('click',()=>nextSlide(1));
+playBtn.addEventListener('click',()=>{ playing ? pause() : play(); });
+
+/* Clavier : flèches = changer d'image, Échap = retour, espace = pause */
+document.addEventListener('keydown',(e)=>{
+  if(!current) return;
+  if(e.key==='Escape') goHome();
+  if(e.key==='ArrowRight') nextSlide(1);
+  if(e.key==='ArrowLeft') nextSlide(-1);
+  if(e.key===' '){ e.preventDefault(); playing ? pause() : play(); }
+});
+</script>
+</body>
+</html>
