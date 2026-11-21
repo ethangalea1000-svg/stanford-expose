@@ -439,8 +439,8 @@ let current = null;   // thème ouvert
 let slideIndex = 0;
 let viewIndex = 0;    // vue en cours dans le thème
 let timer = null;
-let playing = true;
-const SLIDE_MS = 5000; // cadence seulement si on appuie sur Play
+let playing = false;
+const VIEW_MS = 8000; // duree d'affichage d'une vue en lecture automatique (modifiable ici)
 
 /* Construit les gros boutons de l'accueil */
 THEMES.forEach((t,i)=>{
@@ -493,6 +493,7 @@ function renderView(dir){
   viewBoxEl.innerHTML=html;
   viewIdxEl.textContent=(viewIndex+1)+'/'+current.views.length;
   pagerEl.classList.toggle('on', current.views.length>1);
+  syncPhoto(); /* la photo suit la vue : texte et images restent synchronisés */
   /* transition de vue : sans etat cache prealable, le contenu reste visible
      meme si l'animation ne tourne pas */
   viewBoxEl.classList.remove('slide-r','slide-l'); void viewBoxEl.offsetWidth;
@@ -518,10 +519,12 @@ function openTheme(t){
   themeEl.style.display='flex';
   showSlide();
   startAnimation(t);      /* ← lance l'animation du thème si elle existe */
-  pause();               /* photos a la main : rien ne change tout seul pendant l'oral */
+  /* lecture automatique texte+photos à l'ouverture du thème ;
+     sauf si le réglage système demande moins d'animations : tout reste manuel */
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ pause(); } else { play(); }
 }
 function goHome(){
-  stop();
+  pause();
   current=null;
   themeEl.style.display='none';
   homeEl.style.display='block';
@@ -544,9 +547,23 @@ function nextSlide(step){
   slideIndex=(slideIndex+step+current.images.length)%current.images.length;
   showSlide();
 }
+/* Synchronisation : la photo affichée suit la vue en cours.
+   Répartition proportionnelle quand les nombres diffèrent ; les photos
+   non retenues restent visibles à la main avec les flèches haut/bas. */
+function syncPhoto(){
+  if(!current || !current.images.length) return;
+  const nv=current.views.length, ni=current.images.length;
+  const target = nv>1 ? Math.round(viewIndex*(ni-1)/(nv-1)) : 0;
+  if(target!==slideIndex){ slideIndex=target; showSlide(); }
+}
 function play(){
+  if(!current || current.views.length<2){ pause(); return; }
   playing=true; playBtn.textContent='⏸ Pause';
-  stop(); timer=setInterval(()=>{ if(current && current.images.length>1) nextSlide(1); }, SLIDE_MS);
+  stop(); timer=setInterval(()=>{
+    if(!current){ pause(); return; }
+    if(viewIndex<current.views.length-1){ nextView(1); }
+    else pause(); /* dernière vue atteinte : on s'arrête là, le thème ne boucle pas */
+  }, VIEW_MS);
 }
 function pause(){ playing=false; playBtn.textContent='▶ Play'; stop(); }
 function stop(){ if(timer){ clearInterval(timer); timer=null; } }
@@ -585,8 +602,9 @@ playBtn.addEventListener('click',()=>{ playing ? pause() : play(); });
 
 /* Clavier pendant l'oral :
    accueil : touches 1-6 = ouvrir directement un thème ;
-   thème : gauche/droite = changer de vue, haut/bas = changer de photo,
-   Échap = retour accueil, espace = pause/lecture photos. */
+   thème : gauche/droite = changer de vue (la photo suit, tout reste synchronisé),
+   haut/bas = changer de photo à la main, Échap = retour accueil,
+   espace = pause/lecture du défilement automatique. */
 document.addEventListener('keydown',(e)=>{
   if(!current){
     const n=parseInt(e.key,10);
