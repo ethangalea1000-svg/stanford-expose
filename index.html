@@ -123,11 +123,22 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.1) translateX(-1.5%)}}
+  @keyframes photoIn{from{opacity:0;transform:scale(1.04)}to{opacity:1;transform:scale(1)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  @keyframes pagerPulse{0%{transform:scale(1)}40%{transform:scale(1.3)}100%{transform:scale(1)}}
+  /* ouverture d'un theme : la photo et le texte entrent en deux temps */
+  #theme .viewer{animation:popIn .5s cubic-bezier(.22,.8,.3,1)}
+  #theme .viewside{animation:fadeUp .5s .08s ease backwards}
+  #themeTitle{animation:fadeUp .45s ease}
+  .pager span.pulse{animation:pagerPulse .3s ease}
+  .controls button,.pager button,.controls select,.theme-btn{transition:transform .12s ease,background .15s ease}
+  .controls button:active,.pager button:active{transform:scale(.92)}
   .anim-in{animation:fadeUp .55s ease}
-  #slide.swap{animation:fadeIn .5s ease}
+  #slide.swap{animation:photoIn .55s ease}
+  #credit.swap{animation:fadeIn .5s ease}
   #slide.kz{animation:kenburns 14s ease-in-out infinite alternate}
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
-  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme,#home.home-in,.viewbox.slide-r,.viewbox.slide-l{animation:none!important}.theme-btn::before{transition:none}}
+  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#credit.swap,#slide.kz,#slide.kz.swap,#theme,#theme .viewer,#theme .viewside,#themeTitle,#home.home-in,.viewbox.slide-r,.viewbox.slide-l,.pager span.pulse{animation:none!important}.theme-btn::before,.controls button,.pager button,.controls select,.theme-btn{transition:none}}
 
   @media (max-height:800px){
     .viewer img{max-height:28vh}
@@ -507,6 +518,7 @@ function renderView(dir){
   }
   viewBoxEl.innerHTML=html;
   viewIdxEl.textContent=(viewIndex+1)+'/'+current.views.length;
+  viewIdxEl.classList.remove('pulse'); void viewIdxEl.offsetWidth; viewIdxEl.classList.add('pulse');
   pagerEl.classList.toggle('on', current.views.length>1);
   syncPhoto(); /* la photo suit la vue : texte et images restent synchronisés */
   /* transition de vue : sans etat cache prealable, le contenu reste visible
@@ -556,6 +568,7 @@ function showSlide(){
   viewerEl.classList.toggle('has-contain', im.fit==='contain');
   viewerEl.style.setProperty('--bgimg', 'url("'+im.src+'")');
   creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+', '+im.credit;
+  creditEl.classList.remove('swap'); void creditEl.offsetWidth; creditEl.classList.add('swap');
   imgEl.classList.add('swap');
 }
 function nextSlide(step){
