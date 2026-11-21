@@ -96,6 +96,10 @@
     font-size:16px;padding:8px 16px;cursor:pointer;font-family:inherit;
   }
   .controls button:hover{background:var(--cardinal-dark)}
+  .controls select{
+    border:none;border-radius:999px;background:rgba(27,27,27,.85);color:#fff;
+    font-size:14px;padding:8px 12px;cursor:pointer;font-family:inherit;backdrop-filter:blur(4px);
+  }
 
   /* mots-clés, lisibles de loin */
   ul.keywords{list-style:none}
@@ -240,6 +244,11 @@
           <button id="prevBtn">◀</button>
           <button id="playBtn">⏸ Pause</button>
           <button id="nextBtn">▶</button>
+          <select id="speedSel" aria-label="Vitesse du défilement automatique" title="Vitesse du défilement automatique">
+            <option value="12000" selected>Lent · 12 s</option>
+            <option value="8000">Moyen · 8 s</option>
+            <option value="5000">Rapide · 5 s</option>
+          </select>
         </div>
       </div>
       <div class="viewside">
@@ -270,6 +279,7 @@
 const THEMES = [
   {
     id:"campus",
+    photoMap:[1,2,3],
     sources:[["facts.stanford.edu","https://facts.stanford.edu/"]],
     name:"The Campus",
     hint:"Size, buildings, transport",
@@ -292,6 +302,7 @@ const THEMES = [
   },
   {
     id:"history",
+    photoMap:[0,1,1],
     sources:[["orsl.stanford.edu","https://orsl.stanford.edu/memorial-church-history"],["ahro.slac.stanford.edu","https://ahro.slac.stanford.edu/history-bits/slac-and-www"],["stanfordresearchpark.com","https://stanfordresearchpark.com/about/"]],
     name:"History",
     hint:"From 1885 to today",
@@ -317,6 +328,7 @@ const THEMES = [
   },
   {
     id:"studies",
+    photoMap:[0,0,0],
     sources:[["facts.stanford.edu/academics","https://facts.stanford.edu/academics/"]],
     name:"Studies",
     hint:"The 7 schools",
@@ -342,6 +354,7 @@ const THEMES = [
   },
   {
     id:"alumni",
+    photoMap:[0,1,2,0],
     sources:[["facts.stanford.edu","https://facts.stanford.edu/"],["gostanford.com","https://gostanford.com/home-of-champions"]],
     name:"Famous Alumni",
     hint:"Graduates and former students",
@@ -372,6 +385,7 @@ const THEMES = [
   },
   {
     id:"tuition",
+    photoMap:[0,0,0],
     sources:[["news.stanford.edu","https://news.stanford.edu/stories/2025/02/stanford-sets-2025-26-tuition-rates"]],
     name:"Tuition & Fees",
     hint:"What it costs (2025–2026)",
@@ -396,6 +410,7 @@ const THEMES = [
   },
   {
     id:"aid",
+    photoMap:[0,0,0],
     sources:[["financialaid.stanford.edu","https://financialaid.stanford.edu/undergrad/"],["facts.stanford.edu","https://facts.stanford.edu/"]],
     name:"Financial Aid",
     hint:"Scholarships and help",
@@ -440,7 +455,7 @@ let slideIndex = 0;
 let viewIndex = 0;    // vue en cours dans le thème
 let timer = null;
 let playing = false;
-const VIEW_MS = 8000; // duree d'affichage d'une vue en lecture automatique (modifiable ici)
+let viewMs = 12000; // duree d'une vue en lecture auto ; le selecteur de vitesse la change
 
 /* Construit les gros boutons de l'accueil */
 THEMES.forEach((t,i)=>{
@@ -505,7 +520,7 @@ function renderView(dir){
 function nextView(step){
   if(!current) return;
   const n=Math.min(Math.max(viewIndex+step,0),current.views.length-1);
-  if(n!==viewIndex){ viewIndex=n; renderView(step); }
+  if(n!==viewIndex){ viewIndex=n; renderView(step); restartTimer(); }
 }
 function openTheme(t){
   current=t; slideIndex=0; viewIndex=0;
@@ -547,23 +562,26 @@ function nextSlide(step){
   slideIndex=(slideIndex+step+current.images.length)%current.images.length;
   showSlide();
 }
-/* Synchronisation : la photo affichée suit la vue en cours.
-   Répartition proportionnelle quand les nombres diffèrent ; les photos
-   non retenues restent visibles à la main avec les flèches haut/bas. */
+/* Synchronisation : la photo affichée est choisie pour chaque vue
+   (photoMap dans les donnees du theme). Les photos sans vue associee
+   restent visibles a la main avec les fleches haut/bas. */
 function syncPhoto(){
   if(!current || !current.images.length) return;
-  const nv=current.views.length, ni=current.images.length;
-  const target = nv>1 ? Math.round(viewIndex*(ni-1)/(nv-1)) : 0;
+  const map=current.photoMap;
+  const target=(map && viewIndex<map.length) ? map[viewIndex] : 0;
   if(target!==slideIndex){ slideIndex=target; showSlide(); }
 }
+function tick(){
+  if(!current){ pause(); return; }
+  if(viewIndex<current.views.length-1){ nextView(1); }
+  else pause(); /* dernière vue atteinte : on s'arrête là, le thème ne boucle pas */
+}
+function restartTimer(){ if(!playing) return; stop(); timer=setInterval(tick, viewMs); }
 function play(){
   if(!current || current.views.length<2){ pause(); return; }
+  if(viewIndex>=current.views.length-1){ viewIndex=0; renderView(-1); } /* Play en fin de thème = relancer du début */
   playing=true; playBtn.textContent='⏸ Pause';
-  stop(); timer=setInterval(()=>{
-    if(!current){ pause(); return; }
-    if(viewIndex<current.views.length-1){ nextView(1); }
-    else pause(); /* dernière vue atteinte : on s'arrête là, le thème ne boucle pas */
-  }, VIEW_MS);
+  restartTimer();
 }
 function pause(){ playing=false; playBtn.textContent='▶ Play'; stop(); }
 function stop(){ if(timer){ clearInterval(timer); timer=null; } }
@@ -599,6 +617,7 @@ document.getElementById('nextBtn').addEventListener('click',()=>nextSlide(1));
 document.getElementById('viewPrev').addEventListener('click',()=>nextView(-1));
 document.getElementById('viewNext').addEventListener('click',()=>nextView(1));
 playBtn.addEventListener('click',()=>{ playing ? pause() : play(); });
+document.getElementById('speedSel').addEventListener('change',(e)=>{ viewMs=parseInt(e.target.value,10)||12000; restartTimer(); });
 
 /* Clavier pendant l'oral :
    accueil : touches 1-6 = ouvrir directement un thème ;
