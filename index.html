@@ -125,7 +125,7 @@
   #slide.swap{animation:fadeIn .5s ease}
   #slide.kz{animation:kenburns 14s ease-in-out infinite alternate}
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
-  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme,#home.home-in{animation:none!important}.theme-btn::before{transition:none}}
+  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme,#home.home-in,.viewbox.slide-r,.viewbox.slide-l{animation:none!important}.theme-btn::before{transition:none}}
 
   @media (max-height:800px){
     .viewer img{max-height:28vh}
@@ -150,8 +150,28 @@
     .theme-body{grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr)}
   }
 
-  /* ligne sources visible dans chaque theme */
-  .themesources{font-size:15px;color:var(--stone);margin-top:8px}
+  /* ligne sources visible dans chaque theme, discrete */
+  .themesources{font-size:13px;color:var(--stone);margin-top:8px;opacity:.85}
+
+  /* --- passe 9 : vues par theme, lisibles au projecteur --- */
+  .viewside{display:flex;flex-direction:column;min-width:0}
+  .viewbox{flex:1;display:flex;flex-direction:column;justify-content:center;min-height:0}
+  .viewbox .tablewrap{margin-bottom:0;overflow:visible}
+  @keyframes viewInR{from{opacity:0;transform:translateX(48px)}to{opacity:1;transform:none}}
+  @keyframes viewInL{from{opacity:0;transform:translateX(-48px)}to{opacity:1;transform:none}}
+  .viewbox.slide-r{animation:viewInR .4s cubic-bezier(.22,.8,.3,1)}
+  .viewbox.slide-l{animation:viewInL .4s cubic-bezier(.22,.8,.3,1)}
+  .pager{display:none;align-items:center;justify-content:center;gap:16px;margin-top:10px}
+  .pager.on{display:flex}
+  .pager button{border:none;border-radius:999px;background:rgba(140,21,21,.92);color:#fff;font-size:24px;line-height:1;padding:8px 22px;cursor:pointer;font-family:inherit}
+  .pager button:hover{background:var(--cardinal-dark)}
+  .pager span{font-size:17px;color:var(--stone);min-width:44px;text-align:center}
+  .viewbox ul.keywords li{font-size:clamp(19px,2.2vw,30px);line-height:1.45;padding:13px 0 13px 36px}
+  .viewbox ul.keywords li::before{top:24px;width:14px;height:14px}
+  .viewbox .facttable{font-size:clamp(17px,2vw,26px)}
+  .viewbox .facttable th,.viewbox .facttable td{padding:12px 14px}
+  .viewbox ul.timeline li{font-size:clamp(17px,2vw,26px);line-height:1.4;padding:10px 0 10px 100px}
+  .viewbox ul.timeline .yr{font-size:17px;padding:3px 11px;top:13px;left:0}
   .themesources a{color:var(--cardinal)}
 
   /* --- passe 2 : finitions interface et transitions --- */
@@ -224,9 +244,15 @@
           <button id="nextBtn">▶</button>
         </div>
       </div>
-      <div id="extra"></div>
-      <ul class="keywords" id="keywords"></ul>
-      <div class="themesources" id="themeSources"></div>
+      <div class="viewside">
+        <div id="viewBox" class="viewbox"></div>
+        <div class="pager" id="pager">
+          <button id="viewPrev" aria-label="Previous view">&#9664;</button>
+          <span id="viewIdx">1/1</span>
+          <button id="viewNext" aria-label="Next view">&#9654;</button>
+        </div>
+        <div class="themesources" id="themeSources"></div>
+      </div>
     </div>
   </section>
 </main>
@@ -264,7 +290,7 @@ const THEMES = [
       {src:"17-hoover.jpg",   fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"23-rodin.jpg",   credit:"Rodin Sculpture Garden, photo: GualdimG, CC BY-SA 4.0, via Wikimedia Commons"}
     ],
-    animation:function(){kenburns(); stagger('#keywords li');}   /* ← animation ici */
+    animation:function(){kenburns();}   /* ← animation ici */
   },
   {
     id:"history",
@@ -289,7 +315,7 @@ const THEMES = [
       {src:"16-church.jpg", credit:"Memorial Church, photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"},
       {src:"24-slac.jpg", credit:"SLAC National Accelerator Laboratory, photo: Alfred Twu, CC0, via Wikimedia Commons"}
     ],
-    animation:function(){stagger('#extra .timeline li',0.18); stagger('#keywords li');}
+    animation:null
   },
   {
     id:"studies",
@@ -314,7 +340,7 @@ const THEMES = [
     images:[
       {src:"21-mainquad2.jpg", credit:"The Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
+    animation:null
   },
   {
     id:"alumni",
@@ -344,7 +370,7 @@ const THEMES = [
       {src:"19-hpgarage2.jpg", credit:"The HP Garage and house, photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"},
       {src:"26-stadium.jpg", credit:"Stanford Stadium, photo: BrokenSphere, CC BY 3.0, via Wikimedia Commons"}
     ],
-    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
+    animation:null
   },
   {
     id:"tuition",
@@ -368,7 +394,7 @@ const THEMES = [
     images:[
       {src:"20-mainquad.jpg", credit:"The Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
+    animation:null
   },
   {
     id:"aid",
@@ -392,7 +418,7 @@ const THEMES = [
     images:[
       {src:"17-hoover.jpg", fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
+    animation:null
   }
 ];
 
@@ -403,8 +429,9 @@ const homeEl   = document.getElementById('home');
 const themeEl  = document.getElementById('theme');
 const gridEl   = document.getElementById('themeGrid');
 const titleEl  = document.getElementById('themeTitle');
-const kwEl     = document.getElementById('keywords');
-const extraEl  = document.getElementById('extra');
+const viewBoxEl= document.getElementById('viewBox');
+const pagerEl  = document.getElementById('pager');
+const viewIdxEl= document.getElementById('viewIdx');
 const imgEl    = document.getElementById('slide');
 const viewerEl = document.querySelector('.viewer');
 const creditEl = document.getElementById('credit');
@@ -412,6 +439,7 @@ const playBtn  = document.getElementById('playBtn');
 
 let current = null;   // thème ouvert
 let slideIndex = 0;
+let viewIndex = 0;    // vue en cours dans le thème
 let timer = null;
 let playing = true;
 const SLIDE_MS = 5000; // cadence seulement si on appuie sur Play
@@ -435,20 +463,56 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && Element.pro
   });
 }
 
+/* Decoupe les donnees d'un theme en vues assez petites pour etre AFFICHÉES
+   EN GRAND au projecteur : max 5 lignes de tableau ou 4 dates ou 3 mots-clés
+   par vue. La répartition est équilibrée (pas de vue presque vide à la fin). */
+function splitEven(arr,maxPer){
+  const nv=Math.ceil(arr.length/maxPer);
+  const base=Math.floor(arr.length/nv); let rem=arr.length%nv;
+  const out=[]; let i=0;
+  for(let k=0;k<nv;k++){ const c=base+(rem>0?1:0); rem--; out.push(arr.slice(i,i+c)); i+=c; }
+  return out;
+}
+function buildViews(t){
+  const v=[];
+  if(t.table) splitEven(t.table.rows, t.table.head.length>2?4:5).forEach(rows=>v.push({type:'table',rows}));
+  if(t.timeline) splitEven(t.timeline,4).forEach(items=>v.push({type:'timeline',items}));
+  if(t.keywords&&t.keywords.length) splitEven(t.keywords,3).forEach(items=>v.push({type:'kw',items}));
+  if(!v.length) v.push({type:'kw',items:[]});
+  return v;
+}
+function renderView(dir){
+  const v=current.views[viewIndex];
+  let html='';
+  if(v.type==='table'){
+    html='<div class="tablewrap"><table class="facttable"><tr>'+current.table.head.map(x=>'<th>'+x+'</th>').join('')+'</tr>'
+      +v.rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table></div>';
+  } else if(v.type==='timeline'){
+    html='<ul class="timeline">'+v.items.map(e=>'<li><span class="yr">'+e[0]+'</span>'+e[1]+'</li>').join('')+'</ul>';
+  } else {
+    html='<ul class="keywords">'+v.items.map(k=>'<li>'+k+'</li>').join('')+'</ul>';
+  }
+  viewBoxEl.innerHTML=html;
+  viewIdxEl.textContent=(viewIndex+1)+'/'+current.views.length;
+  pagerEl.classList.toggle('on', current.views.length>1);
+  /* transition de vue : sans etat cache prealable, le contenu reste visible
+     meme si l'animation ne tourne pas */
+  viewBoxEl.classList.remove('slide-r','slide-l'); void viewBoxEl.offsetWidth;
+  viewBoxEl.classList.add(dir<0?'slide-l':'slide-r');
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    stagger('#viewBox li, #viewBox tr', 0.09);
+  }
+}
+function nextView(step){
+  if(!current) return;
+  const n=Math.min(Math.max(viewIndex+step,0),current.views.length-1);
+  if(n!==viewIndex){ viewIndex=n; renderView(step); }
+}
 function openTheme(t){
-  current=t; slideIndex=0;
+  current=t; slideIndex=0; viewIndex=0;
   titleEl.textContent=t.name;
-  /* tableau et frise éventuels, au-dessus des mots-clés */
-  let extra='';
-  if(t.table){
-    extra+='<div class="tablewrap"><table class="facttable"><tr>'+t.table.head.map(x=>'<th>'+x+'</th>').join('')+'</tr>'
-      +t.table.rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table></div>';
-  }
-  if(t.timeline){
-    extra+='<ul class="timeline">'+t.timeline.map(e=>'<li><span class="yr">'+e[0]+'</span>'+e[1]+'</li>').join('')+'</ul>';
-  }
-  extraEl.innerHTML=extra;
-  kwEl.innerHTML=t.keywords.map(k=>'<li>'+k+'</li>').join('');
+  t.views=buildViews(t);
+  renderView(1);
   /* sources du theme, visibles sans revenir a l'accueil */
   const tsEl=document.getElementById('themeSources');
   tsEl.innerHTML=(t.sources&&t.sources.length)?'Sources : '+t.sources.map(x=>'<a href="'+x[1]+'" target="_blank" rel="noopener">'+x[0]+'</a>').join(' · '):'';
@@ -517,14 +581,17 @@ function startAnimation(t){
 document.getElementById('backBtn').addEventListener('click',goHome);
 document.getElementById('prevBtn').addEventListener('click',()=>nextSlide(-1));
 document.getElementById('nextBtn').addEventListener('click',()=>nextSlide(1));
+document.getElementById('viewPrev').addEventListener('click',()=>nextView(-1));
+document.getElementById('viewNext').addEventListener('click',()=>nextView(1));
 playBtn.addEventListener('click',()=>{ playing ? pause() : play(); });
 
-/* Clavier : flèches = changer d'image, Échap = retour, espace = pause */
+/* Clavier : flèches = changer de vue, Échap = retour, espace = pause photos.
+   Les photos se changent avec les boutons sur l'image. */
 document.addEventListener('keydown',(e)=>{
   if(!current) return;
   if(e.key==='Escape') goHome();
-  if(e.key==='ArrowRight') nextSlide(1);
-  if(e.key==='ArrowLeft') nextSlide(-1);
+  if(e.key==='ArrowRight') nextView(1);
+  if(e.key==='ArrowLeft') nextView(-1);
   if(e.key===' '){ e.preventDefault(); playing ? pause() : play(); }
 });
 </script>
