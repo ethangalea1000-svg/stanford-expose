@@ -49,19 +49,19 @@
 
   /* ---------- VUE THÈME ---------- */
   #theme{display:none}
-  .topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .topbar{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
   #backBtn{
     border:none;background:var(--cardinal);color:#fff;border-radius:10px;
     font-size:clamp(15px,1.6vw,19px);padding:10px 18px;cursor:pointer;font-family:inherit;
   }
   #backBtn:hover{background:var(--cardinal-dark)}
   #themeTitle{font-size:clamp(24px,3.4vw,42px);color:var(--cardinal);letter-spacing:1px}
-  .theme-body{display:grid;gap:22px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
+  .theme-body{display:grid;gap:16px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
   @media (max-width:900px){.theme-body{grid-template-columns:1fr}}
 
-  /* zone images : diaporama automatique avec pause */
+  /* zone images : photos commandees a la main, lecture auto possible avec Play */
   .viewer{position:relative;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.25)}
-  .viewer img{display:block;width:100%;height:100%;max-height:62vh;object-fit:contain;background:#111}
+  .viewer img{display:block;width:100%;height:100%;max-height:44vh;object-fit:contain;background:#111}
   .credit{font-size:11px;color:#cfcfcf;padding:5px 10px;background:#1b1b1b}
   .controls{
     position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:10px;
@@ -75,11 +75,11 @@
   /* mots-clés, lisibles de loin */
   ul.keywords{list-style:none}
   ul.keywords li{
-    font-size:clamp(17px,2vw,24px);line-height:1.35;
-    padding:10px 0 10px 30px;position:relative;border-bottom:1px solid #e3ddd0;
+    font-size:clamp(16px,1.8vw,22px);line-height:1.3;
+    padding:7px 0 7px 28px;position:relative;border-bottom:1px solid #e3ddd0;
   }
   ul.keywords li::before{
-    content:"";position:absolute;left:4px;top:20px;width:12px;height:12px;
+    content:"";position:absolute;left:4px;top:15px;width:12px;height:12px;
     background:var(--cardinal);border-radius:3px;
   }
   ul.keywords li b{color:var(--cardinal)}
@@ -100,9 +100,13 @@
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
   @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap{animation:none!important}}
 
+  /* ligne sources visible dans chaque theme */
+  .themesources{font-size:13px;color:var(--stone);margin-top:8px}
+  .themesources a{color:var(--cardinal)}
+
   /* frise chronologique (histoire) */
   ul.timeline{list-style:none;margin-bottom:14px}
-  ul.timeline li{position:relative;padding:7px 0 7px 78px;font-size:clamp(15px,1.8vw,21px);line-height:1.3;border-bottom:1px solid #e3ddd0}
+  ul.timeline li{position:relative;padding:5px 0 5px 78px;font-size:clamp(15px,1.7vw,20px);line-height:1.3;border-bottom:1px solid #e3ddd0}
   ul.timeline .yr{position:absolute;left:0;top:8px;background:var(--cardinal);color:#fff;border-radius:6px;padding:2px 8px;font-size:14px;font-weight:bold}
 </style>
 </head>
@@ -148,6 +152,7 @@
       </div>
       <div id="extra"></div>
       <ul class="keywords" id="keywords"></ul>
+      <div class="themesources" id="themeSources"></div>
     </div>
   </section>
 </main>
@@ -167,6 +172,7 @@
 const THEMES = [
   {
     id:"campus",
+    sources:[["facts.stanford.edu","https://facts.stanford.edu/"]],
     name:"The Campus",
     hint:"Size, buildings, transport",
     keywords:[
@@ -187,6 +193,7 @@ const THEMES = [
   },
   {
     id:"history",
+    sources:[["orsl.stanford.edu","https://orsl.stanford.edu/memorial-church-history"],["ahro.slac.stanford.edu","https://ahro.slac.stanford.edu/history-bits/slac-and-www"],["stanfordresearchpark.com","https://stanfordresearchpark.com/about/"]],
     name:"History",
     hint:"From 1885 to today",
     timeline:[
@@ -210,6 +217,7 @@ const THEMES = [
   },
   {
     id:"studies",
+    sources:[["facts.stanford.edu/academics","https://facts.stanford.edu/academics/"]],
     name:"Studies",
     hint:"The 7 schools",
     keywords:[
@@ -234,6 +242,7 @@ const THEMES = [
   },
   {
     id:"alumni",
+    sources:[["facts.stanford.edu","https://facts.stanford.edu/"],["gostanford.com","https://gostanford.com/home-of-champions"]],
     name:"Famous Alumni",
     hint:"Graduates and former students",
     table:{
@@ -262,6 +271,7 @@ const THEMES = [
   },
   {
     id:"tuition",
+    sources:[["news.stanford.edu","https://news.stanford.edu/stories/2025/02/stanford-sets-2025-26-tuition-rates"]],
     name:"Tuition & Fees",
     hint:"What it costs (2025–2026)",
     table:{
@@ -285,6 +295,7 @@ const THEMES = [
   },
   {
     id:"aid",
+    sources:[["financialaid.stanford.edu","https://financialaid.stanford.edu/undergrad/"],["facts.stanford.edu","https://facts.stanford.edu/"]],
     name:"Financial Aid",
     hint:"Scholarships and help",
     table:{
@@ -325,7 +336,7 @@ let current = null;   // thème ouvert
 let slideIndex = 0;
 let timer = null;
 let playing = true;
-const SLIDE_MS = 5000; // une image toutes les 5 secondes
+const SLIDE_MS = 5000; // cadence seulement si on appuie sur Play
 
 /* Construit les gros boutons de l'accueil */
 THEMES.forEach((t,i)=>{
@@ -350,11 +361,14 @@ function openTheme(t){
   }
   extraEl.innerHTML=extra;
   kwEl.innerHTML=t.keywords.map(k=>'<li>'+k+'</li>').join('');
+  /* sources du theme, visibles sans revenir a l'accueil */
+  const tsEl=document.getElementById('themeSources');
+  tsEl.innerHTML=(t.sources&&t.sources.length)?'Sources : '+t.sources.map(x=>'<a href="'+x[1]+'" target="_blank" rel="noopener">'+x[0]+'</a>').join(' · '):'';
   homeEl.style.display='none';
   themeEl.style.display='block';
   showSlide();
   startAnimation(t);      /* ← lance l'animation du thème si elle existe */
-  play();
+  pause();               /* photos a la main : rien ne change tout seul pendant l'oral */
 }
 function goHome(){
   stop();
