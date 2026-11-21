@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stanford University — Our Presentation</title>
+<title>Stanford University - Our Presentation</title>
 <style>
   :root{
     --cardinal:#8C1515;        /* rouge officiel Stanford */
@@ -89,6 +89,7 @@
   .facttable th{background:var(--cardinal);color:#fff;text-align:left;padding:8px 10px}
   .facttable td{padding:8px 10px;border-bottom:1px solid #e3ddd0;vertical-align:top}
   .facttable tr:nth-child(even) td{background:#faf7f0}
+  .tablewrap{overflow-x:auto;margin-bottom:14px}
 
   /* frise chronologique (histoire) */
   ul.timeline{list-style:none;margin-bottom:14px}
@@ -144,7 +145,7 @@
 
 <script>
 /* =====================================================================
-   DONNÉES DU SITE — tout est ici, dans l'objet THEMES.
+   DONNÉES DU SITE : tout est ici, dans l'objet THEMES.
    Pour modifier un texte : changer la ligne correspondante.
    Pour retirer un thème : supprimer son bloc entre { et }.
    Pour ajouter une animation plus tard :
@@ -169,9 +170,9 @@ const THEMES = [
       "<b>Cantor Arts Center</b>: 42,000 works, always free"
     ],
     images:[
-      {src:"20-mainquad.jpg",  credit:"Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
-      {src:"22-palmdrive.jpg",credit:"Palm Drive — photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
-      {src:"17-hoover.jpg",   credit:"Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"20-mainquad.jpg",  credit:"Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"22-palmdrive.jpg",credit:"Palm Drive, photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"17-hoover.jpg",   credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:null   /* ← animation ici */
   },
@@ -191,10 +192,10 @@ const THEMES = [
     ],
     keywords:[
       "Motto in German: <b>« Die Luft der Freiheit weht »</b> (the wind of freedom blows)",
-      "Nickname: <b>« The Farm »</b> — it was a horse farm"
+      "Nickname: <b>« The Farm »</b> (it was a horse farm)"
     ],
     images:[
-      {src:"16-church.jpg", credit:"Memorial Church — photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"}
+      {src:"16-church.jpg", credit:"Memorial Church, photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"}
     ],
     animation:null
   },
@@ -218,7 +219,7 @@ const THEMES = [
       ]
     },
     images:[
-      {src:"21-mainquad2.jpg", credit:"The Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"21-mainquad2.jpg", credit:"The Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:null
   },
@@ -245,8 +246,8 @@ const THEMES = [
       "Sports too: Stanford teams hold <b>139 NCAA titles</b>, a national record"
     ],
     images:[
-      {src:"18-hpgarage.jpg",  credit:"The HP Garage, Palo Alto — photo: Oysterboy9, CC BY-SA 4.0, via Wikimedia Commons"},
-      {src:"19-hpgarage2.jpg", credit:"The HP Garage and house — photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"}
+      {src:"18-hpgarage.jpg",  credit:"The HP Garage, Palo Alto, photo: Oysterboy9, CC BY-SA 4.0, via Wikimedia Commons"},
+      {src:"19-hpgarage2.jpg", credit:"The HP Garage and house, photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"}
     ],
     animation:null
   },
@@ -269,7 +270,7 @@ const THEMES = [
       "Transport and health insurance <b>not included</b>"
     ],
     images:[
-      {src:"20-mainquad.jpg", credit:"The Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"20-mainquad.jpg", credit:"The Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:null
   },
@@ -289,17 +290,17 @@ const THEMES = [
       "Stanford covers <b>100% of demonstrated need</b>, no loans expected",
       "<b>88%</b> of undergraduates graduate debt-free",
       "These rules are for <b>US families</b> · <b>Athletic scholarships</b> also exist (NCAA Division I)",
-      "International students: limited aid — <b>must request it on the admission application</b>"
+      "International students: limited aid, and they <b>must request it on the admission application</b>"
     ],
     images:[
-      {src:"15-aerial.jpg", credit:"The campus from Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"15-aerial.jpg", credit:"The campus from Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:null
   }
 ];
 
 /* =====================================================================
-   MOTEUR DU SITE — normalement pas besoin d'y toucher.
+   MOTEUR DU SITE : normalement pas besoin d'y toucher.
    ===================================================================== */
 const homeEl   = document.getElementById('home');
 const themeEl  = document.getElementById('theme');
@@ -332,8 +333,8 @@ function openTheme(t){
   /* tableau et frise éventuels, au-dessus des mots-clés */
   let extra='';
   if(t.table){
-    extra+='<table class="facttable"><tr>'+t.table.head.map(x=>'<th>'+x+'</th>').join('')+'</tr>'
-      +t.table.rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
+    extra+='<div class="tablewrap"><table class="facttable"><tr>'+t.table.head.map(x=>'<th>'+x+'</th>').join('')+'</tr>'
+      +t.table.rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table></div>';
   }
   if(t.timeline){
     extra+='<ul class="timeline">'+t.timeline.map(e=>'<li><span class="yr">'+e[0]+'</span>'+e[1]+'</li>').join('')+'</ul>';
@@ -357,7 +358,7 @@ function showSlide(){
   const im=current.images[slideIndex];
   imgEl.src=im.src;
   imgEl.alt=im.credit;
-  creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+' — '+im.credit;
+  creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+', '+im.credit;
 }
 function nextSlide(step){
   slideIndex=(slideIndex+step+current.images.length)%current.images.length;
