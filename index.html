@@ -64,7 +64,7 @@
   .theme-btn .hint{font-size:13px;color:var(--stone);margin-top:8px}
 
   /* ---------- VUE THÈME ---------- */
-  #theme{display:none}
+  #theme{display:none;flex-direction:column;min-height:calc(100vh - 140px)}
   .topbar{display:flex;align-items:center;gap:14px;margin-bottom:10px;flex-wrap:wrap}
   #backBtn{
     border:none;background:var(--cardinal);color:#fff;border-radius:10px;
@@ -72,8 +72,13 @@
   }
   #backBtn:hover{background:var(--cardinal-dark)}
   #themeTitle{font-size:clamp(24px,3.4vw,42px);color:var(--cardinal);letter-spacing:1px;border-bottom:4px solid var(--cardinal);padding-bottom:4px}
-  .theme-body{display:grid;gap:16px;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)}
-  @media (max-width:900px){.theme-body{grid-template-columns:1fr}}
+  .theme-body{display:grid;gap:16px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
+    grid-template-areas:"viewer extra" "viewer keywords" "sources sources";align-items:start;flex:1;align-content:center}
+  .viewer{grid-area:viewer}
+  #extra{grid-area:extra}
+  ul.keywords{grid-area:keywords}
+  .themesources{grid-area:sources}
+  @media (max-width:900px){.theme-body{grid-template-columns:1fr;grid-template-areas:"viewer" "extra" "keywords" "sources"}}
 
   /* zone images : photos commandees a la main, lecture auto possible avec Play */
   .viewer{position:relative;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.25)}
@@ -119,12 +124,26 @@
 
   @media (max-height:800px){
     .viewer img{max-height:30vh}
-    .theme-body{grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr)}
+    .theme-body{grid-template-columns:minmax(0,1fr) minmax(0,1.05fr)}
     .facttable{font-size:14px}
     .facttable th,.facttable td{padding:6px 8px}
+    ul.timeline li{padding:3px 0 3px 74px;font-size:14px}
     ul.timeline li{padding:4px 0 4px 74px;font-size:15px}
     ul.keywords li{padding:5px 0 5px 26px;font-size:16px}
     #themeTitle{font-size:clamp(22px,3vw,34px)}
+  }
+
+  @media (max-height:680px){
+    .viewer img{max-height:26vh}
+    .facttable{font-size:13px}
+    .facttable th,.facttable td{padding:4px 7px}
+    ul.timeline li{padding:2px 0 2px 70px;font-size:12.5px;line-height:1.25}
+    ul.timeline .yr{font-size:12px}
+    ul.keywords li{padding:3px 0 3px 26px;font-size:14px}
+    #themeTitle{font-size:clamp(20px,2.6vw,30px)}
+    #theme{padding-top:12px}
+    .topbar{margin-bottom:6px}
+    .theme-body{grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr)}
   }
 
   /* ligne sources visible dans chaque theme */
@@ -227,7 +246,7 @@ const THEMES = [
     images:[
       {src:"20-mainquad.jpg",  credit:"Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"22-palmdrive.jpg",credit:"Palm Drive, photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
-      {src:"17-hoover.jpg",   fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"17-hoover.jpg",   pos:"center 22%", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"23-rodin.jpg",   credit:"Rodin Sculpture Garden, photo: GualdimG, CC BY-SA 4.0, via Wikimedia Commons"}
     ],
     animation:function(){kenburns(); stagger('#keywords li');}   /* ← animation ici */
@@ -356,7 +375,7 @@ const THEMES = [
       "International students: limited aid, and they <b>must request it on the admission application</b>"
     ],
     images:[
-      {src:"17-hoover.jpg", fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"17-hoover.jpg", pos:"center 22%", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   }
@@ -418,7 +437,7 @@ function openTheme(t){
   const tsEl=document.getElementById('themeSources');
   tsEl.innerHTML=(t.sources&&t.sources.length)?'Sources : '+t.sources.map(x=>'<a href="'+x[1]+'" target="_blank" rel="noopener">'+x[0]+'</a>').join(' · '):'';
   homeEl.style.display='none';
-  themeEl.style.display='block';
+  themeEl.style.display='flex';
   showSlide();
   startAnimation(t);      /* ← lance l'animation du thème si elle existe */
   pause();               /* photos a la main : rien ne change tout seul pendant l'oral */
@@ -436,6 +455,7 @@ function showSlide(){
   imgEl.src=im.src;
   imgEl.alt=im.credit;
   imgEl.classList.toggle('contain', im.fit==='contain');
+  imgEl.style.objectPosition = im.pos || 'center';
   creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+', '+im.credit;
   imgEl.classList.add('swap');
 }
