@@ -90,6 +90,15 @@
   .facttable td{padding:8px 10px;border-bottom:1px solid #e3ddd0;vertical-align:top}
   .facttable tr:nth-child(even) td{background:#faf7f0}
   .tablewrap{overflow-x:auto;margin-bottom:14px}
+  /* --- animations --- */
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.1) translateX(-1.5%)}}
+  .anim-in{animation:fadeUp .55s ease both}
+  #slide.swap{animation:fadeIn .5s ease}
+  #slide.kz{animation:kenburns 14s ease-in-out infinite alternate}
+  #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
+  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap{animation:none!important}}
 
   /* frise chronologique (histoire) */
   ul.timeline{list-style:none;margin-bottom:14px}
@@ -174,7 +183,7 @@ const THEMES = [
       {src:"22-palmdrive.jpg",credit:"Palm Drive, photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"17-hoover.jpg",   credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:null   /* ← animation ici */
+    animation:function(){kenburns(); stagger('#keywords li');}   /* ← animation ici */
   },
   {
     id:"history",
@@ -197,7 +206,7 @@ const THEMES = [
     images:[
       {src:"16-church.jpg", credit:"Memorial Church, photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"}
     ],
-    animation:null
+    animation:function(){stagger('#extra .timeline li',0.18); stagger('#keywords li');}
   },
   {
     id:"studies",
@@ -221,7 +230,7 @@ const THEMES = [
     images:[
       {src:"21-mainquad2.jpg", credit:"The Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:null
+    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   },
   {
     id:"alumni",
@@ -249,7 +258,7 @@ const THEMES = [
       {src:"18-hpgarage.jpg",  credit:"The HP Garage, Palo Alto, photo: Oysterboy9, CC BY-SA 4.0, via Wikimedia Commons"},
       {src:"19-hpgarage2.jpg", credit:"The HP Garage and house, photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"}
     ],
-    animation:null
+    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   },
   {
     id:"tuition",
@@ -272,7 +281,7 @@ const THEMES = [
     images:[
       {src:"20-mainquad.jpg", credit:"The Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:null
+    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   },
   {
     id:"aid",
@@ -295,7 +304,7 @@ const THEMES = [
     images:[
       {src:"15-aerial.jpg", credit:"The campus from Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
-    animation:null
+    animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   }
 ];
 
@@ -356,9 +365,11 @@ function goHome(){
 function showSlide(){
   if(!current) return;
   const im=current.images[slideIndex];
+  imgEl.classList.remove('swap'); void imgEl.offsetWidth;
   imgEl.src=im.src;
   imgEl.alt=im.credit;
   creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+', '+im.credit;
+  imgEl.classList.add('swap');
 }
 function nextSlide(step){
   slideIndex=(slideIndex+step+current.images.length)%current.images.length;
@@ -370,6 +381,21 @@ function play(){
 }
 function pause(){ playing=false; playBtn.textContent='▶ Play'; stop(); }
 function stop(){ if(timer){ clearInterval(timer); timer=null; } }
+
+/* Petites fonctions utilitaires pour les animations des thèmes.
+   stagger(sel, pas) : fait apparaitre les elements un par un.
+   kenburns() : lent zoom sur la photo en cours. */
+function stagger(sel,pas){
+  document.querySelectorAll(sel).forEach((el,i)=>{
+    el.classList.remove('anim-in'); void el.offsetWidth;
+    el.style.animationDelay=(i*(pas||0.12))+'s';
+    el.classList.add('anim-in');
+  });
+}
+function kenburns(){
+  const s=document.getElementById('slide');
+  s.classList.remove('kz'); void s.offsetWidth; s.classList.add('kz');
+}
 
 /* Point d'entrée pour les animations.
    Appelé à chaque ouverture de thème. Pour l'instant : ne fait rien
