@@ -24,7 +24,7 @@
   }
   header h1{font-size:clamp(22px,3.4vw,38px);letter-spacing:2px}
   header .sub{font-size:clamp(13px,1.4vw,17px);opacity:.85;font-style:italic}
-  .sources{margin-top:28px;font-size:clamp(11px,1.1vw,14px);opacity:.75;max-width:1100px;line-height:1.6}
+  .sources{margin-top:28px;font-size:clamp(13px,1.3vw,17px);opacity:.85;max-width:1100px;line-height:1.6}
   .sources a{color:#8c1515}
   main{flex:1;padding:26px clamp(14px,4vw,48px)}
 
@@ -100,8 +100,18 @@
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
   @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap{animation:none!important}}
 
+  @media (max-height:800px){
+    .viewer img{max-height:30vh}
+    .theme-body{grid-template-columns:minmax(0,0.95fr) minmax(0,1.05fr)}
+    .facttable{font-size:14px}
+    .facttable th,.facttable td{padding:6px 8px}
+    ul.timeline li{padding:4px 0 4px 74px;font-size:15px}
+    ul.keywords li{padding:5px 0 5px 26px;font-size:16px}
+    #themeTitle{font-size:clamp(22px,3vw,34px)}
+  }
+
   /* ligne sources visible dans chaque theme */
-  .themesources{font-size:13px;color:var(--stone);margin-top:8px}
+  .themesources{font-size:15px;color:var(--stone);margin-top:8px}
   .themesources a{color:var(--cardinal)}
 
   /* frise chronologique (histoire) */
