@@ -24,6 +24,8 @@
   }
   header h1{font-size:clamp(22px,3.4vw,38px);letter-spacing:2px}
   header .sub{font-size:clamp(13px,1.4vw,17px);opacity:.85;font-style:italic}
+  .sources{margin-top:28px;font-size:clamp(11px,1.1vw,14px);opacity:.75;max-width:1100px;line-height:1.6}
+  .sources a{color:#8c1515}
   main{flex:1;padding:26px clamp(14px,4vw,48px)}
 
   /* ---------- ACCUEIL : gros boutons par thème ---------- */
@@ -95,6 +97,16 @@
   <section id="home">
     <h2>Choose a topic / Choisis un thème :</h2>
     <div class="grid" id="themeGrid"></div>
+    <!-- SOURCES officielles : pour que le prof et les élèves puissent vérifier -->
+    <p class="sources">Sources :
+      <a href="https://facts.stanford.edu/" target="_blank" rel="noopener">facts.stanford.edu</a> (campus, budget, alumni, Nobel) ·
+      <a href="https://financialaid.stanford.edu/undergrad/" target="_blank" rel="noopener">financialaid.stanford.edu</a> (aid) ·
+      <a href="https://news.stanford.edu/stories/2025/02/stanford-sets-2025-26-tuition-rates" target="_blank" rel="noopener">news.stanford.edu</a> (2025-26 rates) ·
+      <a href="https://gostanford.com/home-of-champions" target="_blank" rel="noopener">gostanford.com</a> (139 NCAA titles) ·
+      <a href="https://stanfordresearchpark.com/about/" target="_blank" rel="noopener">stanfordresearchpark.com</a> ·
+      <a href="https://ahro.slac.stanford.edu/history-bits/slac-and-www" target="_blank" rel="noopener">ahro.slac.stanford.edu</a> (first US website) ·
+      <a href="https://orsl.stanford.edu/memorial-church-history" target="_blank" rel="noopener">orsl.stanford.edu</a> (Memorial Church)
+    </p>
   </section>
 
   <!-- VUE THÈME : images qui tournent toutes seules + mots-clés -->
@@ -156,8 +168,8 @@ const THEMES = [
     name:"Tuition & Fees",
     hint:"What it costs (2025–2026)",
     keywords:[
-      "Tuition: <b>$67,731</b> per year",
-      "Total budget: about <b>$96,513</b> per year",
+      "Tuition (<b>2025–2026</b>): <b>$67,731</b> per year",
+      "Total budget (<b>2025–2026</b>): about <b>$96,513</b> per year",
       "Housing & meals: <b>$22,167</b>",
       "Books: <b>$840</b> · personal costs: <b>$4,962</b>",
       "New students: <b>+$775</b> one-time fees",
@@ -174,12 +186,12 @@ const THEMES = [
     hint:"Scholarships and help",
     keywords:[
       "Stanford covers <b>100% of demonstrated need</b> — no loans expected",
-      "Family income under <b>$150,000</b>: free tuition",
-      "Under <b>$100,000</b>: tuition + housing + meals <b>free</b>",
+      "Family income under <b>$150,000</b> (with typical assets): <b>no tuition</b>",
+      "Under <b>$100,000</b> (with typical assets): tuition + housing + meals <b>free</b>",
       "About <b>half</b> receive need-based scholarships · 88% graduate debt-free",
       "Average aid (Class of 2028 recipients): <b>$74,310</b>",
-      "<b>Athletic scholarships</b> also exist (NCAA Division I)",
-      "International students: limited aid — ask when applying"
+      "These rules are for <b>US families</b> · <b>Athletic scholarships</b> also exist (NCAA Division I)",
+      "International students: limited aid — <b>must request it on the admission application</b>"
     ],
     images:[
       {src:"15-aerial.jpg", credit:"The campus from Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
