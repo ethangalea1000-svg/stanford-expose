@@ -73,12 +73,10 @@
   #backBtn:hover{background:var(--cardinal-dark)}
   #themeTitle{font-size:clamp(24px,3.4vw,42px);color:var(--cardinal);letter-spacing:1px;border-bottom:4px solid var(--cardinal);padding-bottom:4px}
   .theme-body{display:grid;gap:16px;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);
-    grid-template-areas:"viewer extra" "viewer keywords" "sources sources";align-items:start;flex:1;align-content:center}
+    grid-template-areas:"viewer side";align-items:start;flex:1;align-content:center}
   .viewer{grid-area:viewer}
-  #extra{grid-area:extra}
-  ul.keywords{grid-area:keywords}
-  .themesources{grid-area:sources}
-  @media (max-width:900px){.theme-body{grid-template-columns:1fr;grid-template-areas:"viewer" "extra" "keywords" "sources"}}
+  .viewside{grid-area:side}
+  @media (max-width:900px){.theme-body{grid-template-columns:1fr;grid-template-areas:"viewer" "side"}}
 
   /* zone images : photos commandees a la main, lecture auto possible avec Play */
   .viewer{position:relative;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.25)}
@@ -585,13 +583,21 @@ document.getElementById('viewPrev').addEventListener('click',()=>nextView(-1));
 document.getElementById('viewNext').addEventListener('click',()=>nextView(1));
 playBtn.addEventListener('click',()=>{ playing ? pause() : play(); });
 
-/* Clavier : flèches = changer de vue, Échap = retour, espace = pause photos.
-   Les photos se changent avec les boutons sur l'image. */
+/* Clavier pendant l'oral :
+   accueil : touches 1-6 = ouvrir directement un thème ;
+   thème : gauche/droite = changer de vue, haut/bas = changer de photo,
+   Échap = retour accueil, espace = pause/lecture photos. */
 document.addEventListener('keydown',(e)=>{
-  if(!current) return;
+  if(!current){
+    const n=parseInt(e.key,10);
+    if(n>=1 && n<=THEMES.length) openTheme(THEMES[n-1]);
+    return;
+  }
   if(e.key==='Escape') goHome();
   if(e.key==='ArrowRight') nextView(1);
   if(e.key==='ArrowLeft') nextView(-1);
+  if(e.key==='ArrowDown'){ e.preventDefault(); nextSlide(1); }
+  if(e.key==='ArrowUp'){ e.preventDefault(); nextSlide(-1); }
   if(e.key===' '){ e.preventDefault(); playing ? pause() : play(); }
 });
 </script>
