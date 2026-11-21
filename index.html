@@ -26,19 +26,22 @@
   header .sub{font-size:clamp(13px,1.4vw,17px);opacity:.85;font-style:italic}
   .sources{margin-top:28px;font-size:clamp(13px,1.3vw,17px);opacity:.85;max-width:1100px;line-height:1.6}
   .sources a{color:#8c1515}
-  main{flex:1;padding:26px clamp(14px,4vw,48px)}
+  main{flex:1;padding:0 clamp(14px,4vw,48px) 26px}
+  #theme{padding-top:24px}
 
   /* --- passe 3 : accueil compose, identite visuelle --- */
   body{background:linear-gradient(180deg,#f7f4ee,#efebe2)}
-  #home{display:flex;flex-direction:column;justify-content:center;min-height:calc(100vh - 150px)}
+  #home{display:flex;flex-direction:column;min-height:calc(100vh - 130px)}
   .hero{position:relative;width:100vw;margin-left:calc(50% - 50vw);overflow:hidden;margin-bottom:22px;border-bottom:6px solid var(--cardinal)}
   .hero img{display:block;width:100%;height:30vh;min-height:170px;object-fit:cover;object-position:center 42%}
   .hero figcaption{position:absolute;right:0;bottom:0;font-size:12px;color:#e8e4dc;background:rgba(20,20,20,.72);padding:4px 12px;border-radius:8px 0 0 0}
   #home h2{font-size:clamp(18px,2.2vw,26px);margin-bottom:18px}
-  .grid{grid-template-columns:repeat(3,1fr);gap:18px;width:100%}
+  .grid{grid-template-columns:repeat(3,1fr);gap:18px;width:100%;flex:1;align-content:center}
   @media (max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
   @media (max-width:640px){.grid{grid-template-columns:1fr}.hero{width:100%;margin-left:0}}
+  @media (min-height:900px){.hero img{height:36vh}}
   @media (max-height:800px){.hero img{height:16vh;min-height:96px}.theme-btn{padding:14px 18px 12px}.theme-btn .num{font-size:24px}#home h2{margin-bottom:12px}}
+  @media (max-height:680px){.hero img{height:13vh;min-height:80px}.theme-btn .num{font-size:20px}#home h2{margin-bottom:10px}#home .sources{font-size:14px;margin-top:12px}}
   #home .sources{margin-top:22px}
 
   /* ---------- ACCUEIL : gros boutons par thème ---------- */
@@ -52,7 +55,6 @@
     box-shadow:0 3px 10px rgba(0,0,0,.12);
     transition:transform .18s ease,box-shadow .18s ease;
     font-family:inherit;
-    animation:cardIn .5s ease both;
   }
   .theme-btn::before{content:'';position:absolute;top:0;left:0;height:5px;width:100%;background:var(--cardinal);transform:scaleX(.28);transform-origin:left;transition:transform .25s ease}
   .theme-btn:hover,.theme-btn:focus-visible{transform:translateY(-4px);box-shadow:0 10px 22px rgba(140,21,21,.28);outline:none}
@@ -60,10 +62,6 @@
   .theme-btn .num{font-size:clamp(26px,3vw,40px);font-weight:bold;color:#ecd9c8;line-height:1;letter-spacing:1px}
   .theme-btn .name{font-size:clamp(19px,2.2vw,26px);margin-top:8px;line-height:1.15;color:var(--cardinal-dark)}
   .theme-btn .hint{font-size:13px;color:var(--stone);margin-top:8px}
-  .theme-btn:nth-child(1){animation-delay:.05s}.theme-btn:nth-child(2){animation-delay:.12s}
-  .theme-btn:nth-child(3){animation-delay:.19s}.theme-btn:nth-child(4){animation-delay:.26s}
-  .theme-btn:nth-child(5){animation-delay:.33s}.theme-btn:nth-child(6){animation-delay:.4s}
-  @keyframes cardIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
 
   /* ---------- VUE THÈME ---------- */
   #theme{display:none}
@@ -79,7 +77,8 @@
 
   /* zone images : photos commandees a la main, lecture auto possible avec Play */
   .viewer{position:relative;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.25)}
-  .viewer img{display:block;width:100%;height:100%;max-height:44vh;object-fit:contain;background:#111}
+  .viewer img{display:block;width:100%;height:100%;max-height:44vh;object-fit:cover;background:#111}
+  .viewer img.contain{object-fit:contain}
   .credit{font-size:11px;color:#cfcfcf;padding:5px 10px;background:#1b1b1b}
   .controls{
     position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:10px;
@@ -112,11 +111,11 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
   @keyframes kenburns{from{transform:scale(1.02)}to{transform:scale(1.1) translateX(-1.5%)}}
-  .anim-in{animation:fadeUp .55s ease both}
+  .anim-in{animation:fadeUp .55s ease}
   #slide.swap{animation:fadeIn .5s ease}
   #slide.kz{animation:kenburns 14s ease-in-out infinite alternate}
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
-  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme,.theme-btn{animation:none!important}.theme-btn::before{transition:none}}
+  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme{animation:none!important}.theme-btn::before{transition:none}}
 
   @media (max-height:800px){
     .viewer img{max-height:30vh}
@@ -135,7 +134,7 @@
   /* --- passe 2 : finitions interface et transitions --- */
   header{box-shadow:0 2px 12px rgba(0,0,0,.18)}
   @keyframes themeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  #theme{animation:themeIn .45s ease both}
+  #theme{animation:themeIn .45s ease}
   .theme-btn:active{transform:scale(.98)}
   #backBtn:focus-visible,.controls button:focus-visible,.theme-btn:focus-visible{outline:3px solid #f5e08a;outline-offset:2px}
   .controls button{backdrop-filter:blur(4px);padding:10px 18px;font-size:17px}
@@ -228,7 +227,8 @@ const THEMES = [
     images:[
       {src:"20-mainquad.jpg",  credit:"Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"22-palmdrive.jpg",credit:"Palm Drive, photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
-      {src:"17-hoover.jpg",   credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"17-hoover.jpg",   fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"23-rodin.jpg",   credit:"Rodin Sculpture Garden, photo: GualdimG, CC BY-SA 4.0, via Wikimedia Commons"}
     ],
     animation:function(){kenburns(); stagger('#keywords li');}   /* ← animation ici */
   },
@@ -252,7 +252,8 @@ const THEMES = [
       "Nickname: <b>« The Farm »</b> (it was a horse farm)"
     ],
     images:[
-      {src:"16-church.jpg", credit:"Memorial Church, photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"}
+      {src:"16-church.jpg", credit:"Memorial Church, photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"},
+      {src:"24-slac.jpg", credit:"SLAC National Accelerator Laboratory, photo: Alfred Twu, CC0, via Wikimedia Commons"}
     ],
     animation:function(){stagger('#extra .timeline li',0.18); stagger('#keywords li');}
   },
@@ -306,7 +307,8 @@ const THEMES = [
     ],
     images:[
       {src:"18-hpgarage.jpg",  credit:"The HP Garage, Palo Alto, photo: Oysterboy9, CC BY-SA 4.0, via Wikimedia Commons"},
-      {src:"19-hpgarage2.jpg", credit:"The HP Garage and house, photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"}
+      {src:"19-hpgarage2.jpg", credit:"The HP Garage and house, photo: Arild Finne Nybø, CC BY-SA 2.0, via Wikimedia Commons"},
+      {src:"26-stadium.jpg", credit:"Stanford Stadium, photo: BrokenSphere, CC BY 3.0, via Wikimedia Commons"}
     ],
     animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   },
@@ -354,7 +356,7 @@ const THEMES = [
       "International students: limited aid, and they <b>must request it on the admission application</b>"
     ],
     images:[
-      {src:"15-aerial.jpg", credit:"The campus from Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"17-hoover.jpg", fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   }
@@ -365,13 +367,6 @@ const THEMES = [
    ===================================================================== */
 const homeEl   = document.getElementById('home');
 const themeEl  = document.getElementById('theme');
-/* securite : si l'animation d'entree ne s'execute pas (environnement particulier),
-   ne jamais laisser les cartes invisibles */
-setTimeout(function(){
-  document.querySelectorAll('.theme-btn').forEach(function(b){
-    if(getComputedStyle(b).opacity==='0'){b.style.animation='none';}
-  });
-},1600);
 const gridEl   = document.getElementById('themeGrid');
 const titleEl  = document.getElementById('themeTitle');
 const kwEl     = document.getElementById('keywords');
@@ -394,6 +389,16 @@ THEMES.forEach((t,i)=>{
   b.addEventListener('click',()=>openTheme(t));
   gridEl.appendChild(b);
 });
+/* entree en cascade des cartes : ajoutee en JS seulement si les animations
+   sont acceptees ; sans elle les cartes sont simplement visibles d'office */
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && Element.prototype.animate){
+  document.querySelectorAll('#themeGrid .theme-btn').forEach(function(b,i){
+    b.animate(
+      [{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],
+      {duration:450,delay:60+70*i,easing:'ease',fill:'backwards'}
+    );
+  });
+}
 
 function openTheme(t){
   current=t; slideIndex=0;
@@ -430,6 +435,7 @@ function showSlide(){
   imgEl.classList.remove('swap'); void imgEl.offsetWidth;
   imgEl.src=im.src;
   imgEl.alt=im.credit;
+  imgEl.classList.toggle('contain', im.fit==='contain');
   creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+', '+im.credit;
   imgEl.classList.add('swap');
 }
