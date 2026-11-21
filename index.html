@@ -98,7 +98,7 @@
   #slide.swap{animation:fadeIn .5s ease}
   #slide.kz{animation:kenburns 14s ease-in-out infinite alternate}
   #slide.kz.swap{animation:kenburns 14s ease-in-out infinite alternate, fadeIn .5s ease}
-  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap{animation:none!important}}
+  @media (prefers-reduced-motion:reduce){.anim-in,#slide.swap,#slide.kz,#slide.kz.swap,#theme{animation:none!important}}
 
   @media (max-height:800px){
     .viewer img{max-height:30vh}
@@ -113,6 +113,15 @@
   /* ligne sources visible dans chaque theme */
   .themesources{font-size:15px;color:var(--stone);margin-top:8px}
   .themesources a{color:var(--cardinal)}
+
+  /* --- passe 2 : finitions interface et transitions --- */
+  header{box-shadow:0 2px 12px rgba(0,0,0,.18)}
+  @keyframes themeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  #theme{animation:themeIn .45s ease both}
+  .theme-btn:active{transform:scale(.98)}
+  #backBtn:focus-visible,.controls button:focus-visible,.theme-btn:focus-visible{outline:3px solid #f5e08a;outline-offset:2px}
+  .controls button{backdrop-filter:blur(4px);padding:10px 18px;font-size:17px}
+  @media (min-height:900px){.facttable th,.facttable td{padding:10px 12px}}
 
   /* frise chronologique (histoire) */
   ul.timeline{list-style:none;margin-bottom:14px}
