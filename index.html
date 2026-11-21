@@ -82,6 +82,11 @@
 
   /* zone images : photos commandees a la main, lecture auto possible avec Play */
   .viewer{position:relative;background:#111;border-radius:14px;overflow:hidden;box-shadow:0 4px 14px rgba(0,0,0,.25)}
+  .viewer::before{content:'';position:absolute;inset:0;background-image:var(--bgimg);background-size:cover;background-position:center;filter:blur(20px) brightness(.65);opacity:0}
+  .viewer.has-contain::before{opacity:1}
+  .viewer img{position:relative;z-index:1}
+  .viewer .credit{position:relative;z-index:1}
+  .viewer .controls{z-index:2}
   .viewer img{display:block;width:100%;height:100%;max-height:44vh;object-fit:cover;background:#111}
   .viewer img.contain{object-fit:contain}
   .credit{font-size:11px;color:#cfcfcf;padding:5px 10px;background:#1b1b1b}
@@ -246,7 +251,7 @@ const THEMES = [
     images:[
       {src:"20-mainquad.jpg",  credit:"Main Quad, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"22-palmdrive.jpg",credit:"Palm Drive, photo: Jawed Karim, CC BY-SA 3.0, via Wikimedia Commons"},
-      {src:"17-hoover.jpg",   pos:"center 22%", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
+      {src:"17-hoover.jpg",   fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"},
       {src:"23-rodin.jpg",   credit:"Rodin Sculpture Garden, photo: GualdimG, CC BY-SA 4.0, via Wikimedia Commons"}
     ],
     animation:function(){kenburns(); stagger('#keywords li');}   /* ← animation ici */
@@ -375,7 +380,7 @@ const THEMES = [
       "International students: limited aid, and they <b>must request it on the admission application</b>"
     ],
     images:[
-      {src:"17-hoover.jpg", pos:"center 22%", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"17-hoover.jpg", fit:"contain", credit:"Hoover Tower, photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:function(){stagger('#extra .facttable tr'); stagger('#keywords li');}
   }
@@ -391,6 +396,7 @@ const titleEl  = document.getElementById('themeTitle');
 const kwEl     = document.getElementById('keywords');
 const extraEl  = document.getElementById('extra');
 const imgEl    = document.getElementById('slide');
+const viewerEl = document.querySelector('.viewer');
 const creditEl = document.getElementById('credit');
 const playBtn  = document.getElementById('playBtn');
 
@@ -456,6 +462,8 @@ function showSlide(){
   imgEl.alt=im.credit;
   imgEl.classList.toggle('contain', im.fit==='contain');
   imgEl.style.objectPosition = im.pos || 'center';
+  viewerEl.classList.toggle('has-contain', im.fit==='contain');
+  viewerEl.style.setProperty('--bgimg', 'url("'+im.src+'")');
   creditEl.textContent='Photo '+(slideIndex+1)+'/'+current.images.length+', '+im.credit;
   imgEl.classList.add('swap');
 }
