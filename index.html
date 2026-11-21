@@ -83,6 +83,17 @@
     background:var(--cardinal);border-radius:3px;
   }
   ul.keywords li b{color:var(--cardinal)}
+
+  /* tableaux (études, anciens élèves, frais, aides) */
+  .facttable{width:100%;border-collapse:collapse;margin-bottom:14px;font-size:clamp(14px,1.6vw,19px)}
+  .facttable th{background:var(--cardinal);color:#fff;text-align:left;padding:8px 10px}
+  .facttable td{padding:8px 10px;border-bottom:1px solid #e3ddd0;vertical-align:top}
+  .facttable tr:nth-child(even) td{background:#faf7f0}
+
+  /* frise chronologique (histoire) */
+  ul.timeline{list-style:none;margin-bottom:14px}
+  ul.timeline li{position:relative;padding:7px 0 7px 78px;font-size:clamp(15px,1.8vw,21px);line-height:1.3;border-bottom:1px solid #e3ddd0}
+  ul.timeline .yr{position:absolute;left:0;top:8px;background:var(--cardinal);color:#fff;border-radius:6px;padding:2px 8px;font-size:14px;font-weight:bold}
 </style>
 </head>
 <body>
@@ -99,7 +110,7 @@
     <div class="grid" id="themeGrid"></div>
     <!-- SOURCES officielles : pour que le prof et les élèves puissent vérifier -->
     <p class="sources">Sources :
-      <a href="https://facts.stanford.edu/" target="_blank" rel="noopener">facts.stanford.edu</a> (campus, budget, alumni, Nobel) ·
+      <a href="https://facts.stanford.edu/" target="_blank" rel="noopener">facts.stanford.edu</a> (campus, budget, schools, alumni, Nobel) ·
       <a href="https://financialaid.stanford.edu/undergrad/" target="_blank" rel="noopener">financialaid.stanford.edu</a> (aid) ·
       <a href="https://news.stanford.edu/stories/2025/02/stanford-sets-2025-26-tuition-rates" target="_blank" rel="noopener">news.stanford.edu</a> (2025-26 rates) ·
       <a href="https://gostanford.com/home-of-champions" target="_blank" rel="noopener">gostanford.com</a> (139 NCAA titles) ·
@@ -125,6 +136,7 @@
           <button id="nextBtn">▶</button>
         </div>
       </div>
+      <div id="extra"></div>
       <ul class="keywords" id="keywords"></ul>
     </div>
   </section>
@@ -164,52 +176,22 @@ const THEMES = [
     animation:null   /* ← animation ici */
   },
   {
-    id:"tuition",
-    name:"Tuition & Fees",
-    hint:"What it costs (2025–2026)",
-    keywords:[
-      "Tuition (<b>2025–2026</b>): <b>$67,731</b> per year",
-      "Total budget (<b>2025–2026</b>): about <b>$96,513</b> per year",
-      "Housing & meals: <b>$22,167</b>",
-      "Books: <b>$840</b> · personal costs: <b>$4,962</b>",
-      "New students: <b>+$775</b> one-time fees",
-      "Transport and health insurance not included"
-    ],
-    images:[
-      {src:"21-mainquad2.jpg", credit:"The Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
-    ],
-    animation:null
-  },
-  {
-    id:"aid",
-    name:"Financial Aid",
-    hint:"Scholarships and help",
-    keywords:[
-      "Stanford covers <b>100% of demonstrated need</b> — no loans expected",
-      "Family income under <b>$150,000</b> (with typical assets): <b>no tuition</b>",
-      "Under <b>$100,000</b> (with typical assets): tuition + housing + meals <b>free</b>",
-      "About <b>half</b> receive need-based scholarships · 88% graduate debt-free",
-      "Average aid (Class of 2028 recipients): <b>$74,310</b>",
-      "These rules are for <b>US families</b> · <b>Athletic scholarships</b> also exist (NCAA Division I)",
-      "International students: limited aid — <b>must request it on the admission application</b>"
-    ],
-    images:[
-      {src:"15-aerial.jpg", credit:"The campus from Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
-    ],
-    animation:null
-  },
-  {
     id:"history",
     name:"History",
     hint:"From 1885 to today",
+    timeline:[
+      ["1885","Founded by <b>Leland and Jane Stanford</b>, in memory of their son <b>Leland Jr</b>, who died at 15"],
+      ["1891","Opens on <b>October 1</b>. Official name: <b>Leland Stanford Junior University</b>"],
+      ["1906","A huge <b>earthquake</b> devastates the campus and Memorial Church"],
+      ["1914","Memorial Church <b>rebuilt</b>"],
+      ["1937","The <b>klystron</b> is invented at Stanford (key for radar and accelerators)"],
+      ["1939","<b>HP</b> is founded by two Stanford graduates"],
+      ["1951","<b>Stanford Research Park</b> is created"],
+      ["1991","<b>First website in North America</b>, at the SLAC lab"]
+    ],
     keywords:[
-      "Founded in <b>1885</b> by <b>Leland and Jane Stanford</b>",
-      "In memory of their son <b>Leland Jr</b>, who died at 15",
-      "Opened on <b>October 1, 1891</b>",
-      "Official name: <b>Leland Stanford Junior University</b>",
-      "Motto in German: <b>« Die Luft der Freiheit weht »</b> — the wind of freedom blows",
-      "Nickname: <b>« The Farm »</b> — it was a horse farm",
-      "The <b>1906 earthquake</b> devastated Memorial Church — rebuilt by 1914"
+      "Motto in German: <b>« Die Luft der Freiheit weht »</b> (the wind of freedom blows)",
+      "Nickname: <b>« The Farm »</b> — it was a horse farm"
     ],
     images:[
       {src:"16-church.jpg", credit:"Memorial Church — photo: Frank Schulenburg, CC BY-SA 4.0, via Wikimedia Commons"}
@@ -217,16 +199,50 @@ const THEMES = [
     animation:null
   },
   {
-    id:"valley",
-    name:"Silicon Valley",
-    hint:"Companies born at Stanford",
+    id:"studies",
+    name:"Studies",
+    hint:"The 7 schools",
     keywords:[
-      "Stanford is the <b>birthplace of Silicon Valley</b>",
-      "<b>HP</b> founded in <b>1939</b> by two Stanford graduates",
-      "Professor <b>Terman</b> pushed students to start companies",
-      "<b>Google, Yahoo, Netflix, Nike, Instagram, LinkedIn, NVIDIA, WhatsApp</b>: founded by alumni",
-      "<b>Cisco</b> (1984): founded by two Stanford staff members, from the campus network",
-      "<b>Stanford Research Park</b> (since 1951): over <b>150 companies</b>"
+      "About <b>7,289</b> undergraduate + <b>10,025</b> graduate students (fall 2025)"
+    ],
+    table:{
+      head:["School","Known for"],
+      rows:[
+        ["Humanities and Sciences","Literature, sciences, languages"],
+        ["Engineering","Technology and invention"],
+        ["Medicine","Health and biomedical research"],
+        ["Law","Law and justice"],
+        ["Business (GSB)","Management and entrepreneurship"],
+        ["Education","Teaching and learning research"],
+        ["Sustainability","Climate and energy, the newest school (2022)"]
+      ]
+    },
+    images:[
+      {src:"21-mainquad2.jpg", credit:"The Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
+    ],
+    animation:null
+  },
+  {
+    id:"alumni",
+    name:"Famous Alumni",
+    hint:"Graduates and former students",
+    table:{
+      head:["Name","Known for","At Stanford"],
+      rows:[
+        ["Herbert Hoover","31st US President","Graduated 1895, geology"],
+        ["Hewlett & Packard","Founded HP","Graduated 1934, engineering"],
+        ["Phil Knight","Founded Nike","MBA 1962"],
+        ["Sally Ride","First American woman in space","Physics degrees, 1973-1978"],
+        ["Brin & Page","Founded Google","Computer science PhD program, left to start Google"],
+        ["Reed Hastings","Founded Netflix","MS computer science, 1988"],
+        ["Systrom & Krieger","Founded Instagram","Graduated 2006 and 2008"],
+        ["Tiger Woods","Golf champion","Studied 2 years, left to turn pro"],
+        ["Katie Ledecky","Olympic swimming champion","Graduated 2021, psychology"]
+      ]
+    },
+    keywords:[
+      "Many alumni started companies: Stanford is the <b>birthplace of Silicon Valley</b>",
+      "Sports too: Stanford teams hold <b>139 NCAA titles</b>, a national record"
     ],
     images:[
       {src:"18-hpgarage.jpg",  credit:"The HP Garage, Palo Alto — photo: Oysterboy9, CC BY-SA 4.0, via Wikimedia Commons"},
@@ -235,37 +251,48 @@ const THEMES = [
     animation:null
   },
   {
-    id:"innovations",
-    name:"Innovations & Research",
-    hint:"Inventions and science",
+    id:"tuition",
+    name:"Tuition & Fees",
+    hint:"What it costs (2025–2026)",
+    table:{
+      head:["Expense (2025–2026)","Cost"],
+      rows:[
+        ["Tuition","<b>$67,731</b> per year"],
+        ["Housing & meals","$22,167"],
+        ["Books","$840"],
+        ["Personal costs","$4,962"],
+        ["New students (one-time fee)","$775"],
+        ["<b>Total budget</b>","about <b>$96,513</b> per year"]
+      ]
+    },
     keywords:[
-      "The <b>klystron</b> (1937): key for air navigation and particle accelerators",
-      "<b>First website in North America</b>: SLAC lab, 1991",
-      "<b>22 Nobel Prize</b> winners in the community",
-      "More than <b>7,500</b> sponsored research projects",
-      "A world leader in <b>AI research</b> (Stanford HAI, AI Index)"
+      "Transport and health insurance <b>not included</b>"
     ],
     images:[
-      {src:"24-slac.jpg",  credit:"SLAC National Accelerator Laboratory — photo: Alfred Twu, CC0, via Wikimedia Commons"},
-      {src:"25-slac2.jpg", credit:"The linear accelerator from above — photo: Pi.1415926535, CC BY-SA 3.0, via Wikimedia Commons"}
+      {src:"20-mainquad.jpg", credit:"The Main Quad — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:null
   },
   {
-    id:"life",
-    name:"Student Life",
-    hint:"Housing, sports, people",
+    id:"aid",
+    name:"Financial Aid",
+    hint:"Scholarships and help",
+    table:{
+      head:["Situation","What Stanford covers"],
+      rows:[
+        ["Family income under <b>$150,000</b> (with typical assets)","<b>No tuition</b>"],
+        ["Family income under <b>$100,000</b> (with typical assets)","Tuition + housing + meals <b>free</b>"],
+        ["Average scholarship (Class of 2028 recipients)","<b>$74,310</b>"]
+      ]
+    },
     keywords:[
-      "<b>7,289</b> undergraduate + <b>10,025</b> graduate students (fall 2025)",
-      "Housing for everyone: dorms, <b>Row houses</b>, co-ops",
-      "The <b>Big Game</b>: historic football rivalry vs UC Berkeley",
-      "<b>139 NCAA titles</b> — a national record",
-      "<b>Thousands</b> of students do community service every year",
-      "Famous alumni: <b>Herbert Hoover, Sally Ride, Tiger Woods, Katie Ledecky</b>"
+      "Stanford covers <b>100% of demonstrated need</b>, no loans expected",
+      "<b>88%</b> of undergraduates graduate debt-free",
+      "These rules are for <b>US families</b> · <b>Athletic scholarships</b> also exist (NCAA Division I)",
+      "International students: limited aid — <b>must request it on the admission application</b>"
     ],
     images:[
-      {src:"26-stadium.jpg", credit:"Stanford Stadium — photo: BrokenSphere, CC BY 3.0, via Wikimedia Commons"},
-      {src:"23-rodin.jpg",   credit:"Rodin Sculpture Garden — photo: GualdimG, CC BY-SA 4.0, via Wikimedia Commons"}
+      {src:"15-aerial.jpg", credit:"The campus from Hoover Tower — photo: King of Hearts, CC BY-SA 3.0, via Wikimedia Commons"}
     ],
     animation:null
   }
@@ -279,6 +306,7 @@ const themeEl  = document.getElementById('theme');
 const gridEl   = document.getElementById('themeGrid');
 const titleEl  = document.getElementById('themeTitle');
 const kwEl     = document.getElementById('keywords');
+const extraEl  = document.getElementById('extra');
 const imgEl    = document.getElementById('slide');
 const creditEl = document.getElementById('credit');
 const playBtn  = document.getElementById('playBtn');
@@ -301,6 +329,16 @@ THEMES.forEach((t,i)=>{
 function openTheme(t){
   current=t; slideIndex=0;
   titleEl.textContent=t.name;
+  /* tableau et frise éventuels, au-dessus des mots-clés */
+  let extra='';
+  if(t.table){
+    extra+='<table class="facttable"><tr>'+t.table.head.map(x=>'<th>'+x+'</th>').join('')+'</tr>'
+      +t.table.rows.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
+  }
+  if(t.timeline){
+    extra+='<ul class="timeline">'+t.timeline.map(e=>'<li><span class="yr">'+e[0]+'</span>'+e[1]+'</li>').join('')+'</ul>';
+  }
+  extraEl.innerHTML=extra;
   kwEl.innerHTML=t.keywords.map(k=>'<li>'+k+'</li>').join('');
   homeEl.style.display='none';
   themeEl.style.display='block';
